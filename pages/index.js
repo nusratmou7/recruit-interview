@@ -86,7 +86,7 @@ const Snake = () => {
         const newHead = { x: head.x + direction.x, y: head.y + direction.y };
 
         // make a new snake by extending head
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+       
         const newSnake = [newHead, ...snake];
 
         // remove tail
@@ -106,9 +106,21 @@ const Snake = () => {
   useEffect(() => {
     const head = snake[0];
     if (isFood(head)) {
+    
+      const  seTSnakeLength = () => {
+        setSnake((snake) => {
+          const tail = snake[snake.length - 1];
+          const newTail = { x: tail.x + direction.x, y: tail.y + direction.y };
+          const newSnake = [...snake, newTail];
+          return newSnake;
+        });
+      };
+      seTSnakeLength();
+
       setScore((score) => {
         return score + 1;
       });
+
 
       let newFood = getRandomCell();
       while (isSnake(newFood)) {
@@ -143,6 +155,36 @@ const Snake = () => {
 
     return () => window.removeEventListener("keydown", handleNavigation);
   }, []);
+
+
+
+  //snake dies and game reset 
+  useEffect(()=>{
+    let head = snake[0];
+    snake.map((snakePart, index) =>{
+      if(head.x === snakePart.x && head.y === snakePart.y && index !== 0){
+        const  seTSnakeLength = () => {
+          setSnake(() => {
+            const getDefaultSnake = () => [
+              { x: 8, y: 12 },
+              { x: 7, y: 12 },
+              { x: 6, y: 12 },
+            ];
+            const newSnake = getDefaultSnake();
+            return newSnake;
+          });
+        };
+        seTSnakeLength();
+  
+        setScore(() => {
+          return 0;
+        });
+      }
+    })
+
+  },[snake])
+
+  
 
   // ?. is called optional chaining
   // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
